@@ -125,6 +125,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 #Celery
-CELERY_BROKER_URL='redis://localhost:6379'
-CELERY_ACCEPT_CONTENT=['json']
-CELERY_TASK_SERIALIZER='json'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS = ("account.tasks", )
+TELEGRAM_API='1110547841:AAFUyenptIw4j_5Xi-UKb3YQBq_Md3ix430'
