@@ -2,7 +2,9 @@ from datetime import datetime, timezone
 import json
 import urllib
 import ssl
+from django.utils import timezone as time_zone
 
+from django.utils.timezone import now, pytz
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.functions import Now
@@ -13,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 import requests
 
 from account.models import User, Leads, Planning
+from project_crm import settings
 
 
 def logout_view(request):
@@ -76,12 +79,6 @@ def PlanningPage(request):
 
 @login_required(login_url='login/')
 def home(request):
-    # ll = int(datetime.now(tz=timezone.utc).timestamp())
-    # timestamp = datetime.fromtimestamp(ll)
-    # timestamp.strftime('%Y-%m-%d %H:%M:%S')
-    # ssl._create_default_https_context = ssl._create_unverified_context
-    # req = urllib.request.Request('https://api.telegram.org/bot850217832:AAHA-PAxAQHLRhyS_9XugbtZY7kTOVuBxaY/sendMessage?chat_id=214792065&parse_mode=html&text='+ll)
-    # urllib.request.urlopen(req)
 
     SLS = User.objects.filter(role="SLS")
     CLS = User.objects.filter(role="CLS")
@@ -235,7 +232,12 @@ def AjaxUpdatePlanning(request):
     return HttpResponse('Bad request')
 @login_required(login_url='login/')
 def test(request):
-    p=Planning.objects.filter(update__lte=Now(),notification=True)
+    ll = int(datetime.now(tz=timezone.utc).timestamp())+600
+    moscow=pytz.timezone(settings.TIME_ZONE)
+    timestamp = datetime.fromtimestamp(ll,moscow)
+    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    p=Planning.objects.filter(update__lte=timestamp,notification=True)
+
     t='';
     for i in p:
         inline_button1 = {"text" : "View customer","url" : "https://google.com/lead/"+str(i.lead.id)}
@@ -245,7 +247,9 @@ def test(request):
         ssl._create_default_https_context = ssl._create_unverified_context
         text= f"<b>We remind</b>%0AAbout the event «{i.type}» for the client {i.lead.full_name}"
         url = "https://api.telegram.org/bot850217832:AAHA-PAxAQHLRhyS_9XugbtZY7kTOVuBxaY/sendMessage?chat_id="+i.manager.telegram+"&parse_mode=html&text="+text+"&reply_markup="+replyMarkup
-        t=i.update.strftime("%Y-%m-%d %H:%M:%S")
+
+        t= datetime.fromtimestamp(int(i.update.timestamp()),moscow).strftime('%d-%m-%Y %H:%M')
+        # t=moscow.localize(t)
         payload = {}
         headers = {}
 
@@ -256,5 +260,9 @@ def test(request):
 
         'p': p,
         't': t,
+        'll': ll,
+        'user_timezone': timezone.utc,
+        'timestamp': datetime.now(),
+        'moscow': moscow,
 
     })
