@@ -16,7 +16,7 @@ from account.models import Planning
 
 
 from celery import shared_task, app
-@periodic_task(run_every=(crontab(minute='*/1')),name="send")
+@periodic_task(run_every=(crontab(minute='*/5')),name="send")
 def send():
     p = Planning.objects.filter(update__lte=Now(), notification=True)
     for i in p:
