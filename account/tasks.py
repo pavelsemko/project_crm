@@ -14,17 +14,16 @@ from celery.task import periodic_task
 from celery.schedules import crontab
 
 from project_crm import celery, settings
-from account.models import Planning
-
+from account.models import Planning, TelegramApi
 
 from celery import shared_task, app
-@periodic_task(run_every=(crontab(minute='*/1')),name="send")
+@periodic_task(run_every=(crontab(minute='*/5')),name="send")
 def send():
     ll = int(datetime.now(pytz.timezone("Europe/Moscow")).timestamp()) + 600
     timestamp = datetime.fromtimestamp(ll)
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     moscow=pytz.timezone(settings.TIME_ZONE)
-
+    key= TelegramApi.objects.get(id=1).key
     p = Planning.objects.filter(update__lte=timestamp, notification=True)
     for i in p:
         inline_button1 = {"text": "View customer", "url": "https://easycrm.xyz/lead/" + str(i.lead.id)}
@@ -33,7 +32,7 @@ def send():
         replyMarkup = json.dumps(keyboard)
         ssl._create_default_https_context = ssl._create_unverified_context
         text = urllib.parse.quote(f"<b>🛎️Напоминаем🛎️</b>\nУ вас стоит «{i.type}» на <b>{datetime.fromtimestamp(int(i.update.timestamp()),moscow).strftime('%d-%m-%Y %H:%M')}</b> {i.lead.full_name} (#{i.lead.id})\n☎️Не забудь позвонить☎️")
-        url = "https://api.telegram.org/bot"+settings.TELEGRAM_API+"/sendMessage?chat_id=" + i.manager.telegram + "&parse_mode=html&text=" + text + "&reply_markup=" + replyMarkup
+        url = "https://api.telegram.org/bot"+key+"/sendMessage?chat_id=" + i.manager.telegram + "&parse_mode=html&text=" + text + "&reply_markup=" + replyMarkup
 
         payload = {}
         headers = {}

@@ -72,3 +72,10 @@ class Planning(models.Model):
     type=models.CharField(choices=TYPES,max_length=50,default='First call')
     def __str__(self):
         return self.type
+
+class TelegramApi(models.Model):
+
+    key = models.CharField(max_length=100,blank=True, null=True)
+
+    def __str__(self):
+        return self.key

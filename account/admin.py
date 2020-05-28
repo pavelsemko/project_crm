@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib.auth.admin import UserAdmin
 
-from account.models import User, Leads, Planning
+from account.models import User, Leads, Planning, TelegramApi
 from django.contrib.auth.forms import UserChangeForm
 
 class MyUserChangeForm(UserChangeForm):
@@ -20,3 +20,4 @@ class MyUserAdmin(UserAdmin):
 admin.site.register(User,MyUserAdmin)
 admin.site.register(Leads)
 admin.site.register(Planning)
+admin.site.register(TelegramApi)
