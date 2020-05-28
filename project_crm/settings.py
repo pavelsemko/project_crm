@@ -108,10 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 AUTH_USER_MODEL='account.User'
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL='/login/'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

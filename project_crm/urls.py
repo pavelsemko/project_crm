@@ -29,5 +29,6 @@ urlpatterns = [
     path('ajaxUpdatePlanning/',views.AjaxUpdatePlanning,name='AjaxUpdatePlanning'),
     path('planning/',views.PlanningPage,name='planning'),
     path('lead/<int:id>',views.lead,name='lead'),
+    path('test/',views.test,name='test'),
 
 ]

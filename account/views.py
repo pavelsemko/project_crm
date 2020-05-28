@@ -236,24 +236,25 @@ def AjaxUpdatePlanning(request):
 @login_required(login_url='login/')
 def test(request):
     p=Planning.objects.filter(update__lte=Now(),notification=True)
+    t='';
     for i in p:
         inline_button1 = {"text" : "View customer","url" : "https://google.com/lead/"+str(i.lead.id)}
         inline_keyboard = [[inline_button1]];
         keyboard = {"inline_keyboard": inline_keyboard}
         replyMarkup = json.dumps(keyboard)
-        t+=i.manager.telegram
         ssl._create_default_https_context = ssl._create_unverified_context
         text= f"<b>We remind</b>%0AAbout the event «{i.type}» for the client {i.lead.full_name}"
         url = "https://api.telegram.org/bot850217832:AAHA-PAxAQHLRhyS_9XugbtZY7kTOVuBxaY/sendMessage?chat_id="+i.manager.telegram+"&parse_mode=html&text="+text+"&reply_markup="+replyMarkup
-
+        t=i.update.strftime("%Y-%m-%d %H:%M:%S")
         payload = {}
         headers = {}
 
-        requests.request("GET", url, headers=headers, data=payload)
-    p.update(notification=False)
+        # requests.request("GET", url, headers=headers, data=payload)
+    # p.update(notification=False)
 
     return render(request, 'test.html', {
 
         'p': p,
+        't': t,
 
     })
