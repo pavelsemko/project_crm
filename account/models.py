@@ -17,7 +17,7 @@ class User(AbstractUser):
 
     )
     role = models.CharField(max_length=25, choices=EMPLOYEE_TYPES,default='SLS')
-    telegram = models.CharField(max_length=30, blank=True)
+    telegram = models.CharField(max_length=30)
     closer = models.ForeignKey('self',on_delete=models.SET_NULL, null=True,blank=True)
 
 class Leads(models.Model):
